@@ -36,20 +36,15 @@ def calcSimilarity(listSimilarity,sizeDoc):
         soma = 0
         for x in xrange(sizeDoc):
             soma += listSimilarity[i][x]
-        scores.update({i:soma})
+        scores.update({i:str(round(soma,7))})
     return scores
 
 def bestSentences(dictSent,fileSentences,numb):
-    sentSort = sorted(dictSent.values(),reverse=True)
-    print sentSort
+    sentSort = sorted(dictSent, key = dictSent.__getitem__,reverse=True)
+    #  sorted(dictSent.values(),reverse=True)
     bestSentences = []
-    index = (sentSort[1])
-    print type(index)
-    print dictSent[1.245543827245879]
-    for i in xrange(numb - 1):
-        index = dictSent[sentSort[i]]
-        print index
-        bestSentences.append(fileSentences[index])
+    for i in xrange(numb):
+        bestSentences.append(fileSentences[sentSort[i]])
     return bestSentences
 
 ########################
@@ -65,7 +60,7 @@ listSimilarity = cosine_similarity(vecSpaceModel[0:sizeDoc],vecSpaceModel)
 
 score = calcSimilarity(listSimilarity,sizeDoc)
 bestSentences = bestSentences(score,fileSentences,3)
-# print bestSentences
+print bestSentences
 
 
 
