@@ -1,6 +1,6 @@
-########################
-#      imports         #
-########################
+################################################
+#                   imports                    #
+################################################
 import codecs
 import glob, os
 import nltk
@@ -8,62 +8,50 @@ import numpy as np
 import re
 import sys
 import string
-from nltk.tokenize import sent_tokenize
-#from nltk.tokenize import word_tokenize
-#from sklearn.datasets import fetch_20newsgroups
-from sklearn.feature_extraction.text import CountVectorizer
+#from nltk.tokenize import sent_tokenize, word_tokenize
+#from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from exercise_1 import  fileSentences, weightVect, calcSimilarity, bestSentences
+from exercise_1 import  fileSentences, similarity, dictSimilarity, bestSentences, printBestSent
 
-########################
-#      functions       #
-########################
+################################################
+#                 functions                    #
+################################################
 
 def getFiles(path):
-    allfiles = []
+    allfiles = ""
     for filename in os.listdir(path)[1:]:
         fpath = os.path.join(path, filename)
-        newfile = fileSentences(fpath)
-        allfiles+=(newfile)
-    return allfiles
+        newfile = (fileSentences(fpath))#
+        # print (newfile).replace('\n', '')
+        allfiles+=(newfile).replace('\n', '')
+    return [allfiles]
 
 
-########################
-#         run          #
-########################
+
+################################################
+#                     run                      #
+################################################
+
 if __name__ == '__main__':
 
     fpath = os.path.join("TeMario/Textos-fonte", "ce94jl10-a.txt")
-    fileS = fileSentences(fpath)
-    # print fileS
-    sizeDoc = len(fileS)
-    # vecSpaceModel = weightVect(fileS)
+    docs = getFiles("TeMario/Textos-fonte")
 
-    allDoc = getFiles("TeMario/Textos-fonte")
-    #print allDoc
-    # vecSpaceModelAllFiles = weightVect(allDoc)
-    # print vecSpaceModelAllFiles.shape[1]
+    docEval = fileSentences(fpath)
+    fileS = re.split(r'[\r\n]+',docEval)
+    
+    matrixSimilarity = similarity(docs, fileS)
+    scores = dictSimilarity(matrixSimilarity)
 
-    # listSimilarity = cosine_similarity(vecSpaceModel,vecSpaceModelAllFiles)
-#############################
+    bestS = bestSentences(scores,fileS,5)
 
-    vectorizer = TfidfVectorizer( use_idf=True )
-    vecSpacefit = vectorizer.fit(allDoc)
-    doc = vectorizer.transform(fileS)
-    print doc.shape[1]
-    docs = vectorizer.transform(allDoc)
-    print docs.shape[1]
+    printBestSent(bestS)
 
-    listSimilarity = cosine_similarity(doc,docs)
-    print len(listSimilarity)
-    print sizeDoc
-    # print listSimilarity
 
-    score = calcSimilarity(listSimilarity,sizeDoc)
-    bestS = bestSentences(score,fileS,5)
-    print bestS
+
+
 
 
 
