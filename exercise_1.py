@@ -13,7 +13,46 @@ import string
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from math import log10
 
+# ################################################
+# #                   classes                    #
+# ################################################
+#
+# # class TfidfTransformer_2(TfidfTransformer):
+# #     def __init__(self):
+# #         TfidfTransformer.__init__(self, use_idf = True)
+# #
+# #     def fit(self, X, y=None):
+# #         """Learn the idf vector (global term weights)
+# #         Parameters
+# #         ----------
+# #         X : sparse matrix, [n_samples, n_features]
+# #             a matrix of term/token counts
+# #         """
+# #         if not sp.issparse(X):
+# #             X = sp.csc_matrix(X)
+# #         if self.use_idf:
+# #             n_samples, n_features = X.shape
+# #             df = _document_frequency(X)
+# #
+# #             # perform idf smoothing if required
+# #             df += int(self.smooth_idf)
+# #             n_samples += int(self.smooth_idf)
+# #
+# #             # log+1 instead of log makes sure terms with zero idf don't get
+# #             # suppressed entirely.
+# #             idf = log10(float(n_samples) / df)
+# #             self._idf_diag = sp.spdiags(idf, diags=0, m=n_features, n=n_features, format='csr')
+# #
+# #             return self
+#
+#
+#
+# class TfidfVectorizer_2(TfidfVectorizer):
+#
+#     def __init__(self):
+#     #         TfidfTransformer.__init__(self, use_idf = True)
 
 ################################################
 #                 functions                    #
@@ -56,14 +95,8 @@ def printBestSent(bestSent):
     for i in xrange(len(bestSent)):
         print bestSent[i] + "\n"
 
-
-
-################################################
-#                     run                      #
-################################################
-
-if __name__ == '__main__':
-    fpath = os.path.join("TeMario/Textos-fonte", "ce94jl10-a.txt")
+def exercise_1_main(dir, file, nr):
+    fpath = os.path.join(dir, file)
 
     lines = fileSentences(fpath)
     doc=lines.replace('\n', '')
@@ -71,19 +104,14 @@ if __name__ == '__main__':
     fileS = re.split(r'[\r\n]+',lines)
 
     matrixSimilarity = similarity([doc], fileS)
-
     scores = dictSimilarity(matrixSimilarity)
 
-    bestS = bestSentences(scores,fileS,3)
-
+    bestS = bestSentences(scores,fileS,nr)
     printBestSent(bestS)
 
+################################################
+#                     run                      #
+################################################
 
-
-
-
-
-
-
-
-    #
+if __name__ == '__main__':
+    exercise_1_main("TeMario/Textos-fonte", "ce94jl10-a.txt", 3)
