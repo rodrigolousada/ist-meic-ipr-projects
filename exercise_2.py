@@ -101,7 +101,8 @@ def getStatistics(file, statistics_list, ideal_summary, bestS):
 def exercise_2_main(file):
     docs = getFiles("TeMario/Textos-fonte")
 
-    statistics_list = []
+    statistics_1_list = []
+    statistics_2_list = []
 
     for filename in os.listdir("TeMario/Textos-fonte")[1:]:
         fpath = os.path.join("TeMario/Textos-fonte", filename)
@@ -121,13 +122,23 @@ def exercise_2_main(file):
         ideal_summary = getIdealSummary(filename)
         printBestSent(ideal_summary)
 
-        getStatistics(filename, statistics_list, ideal_summary, bestS)
+        bestS_1 =exercise_1_main("TeMario/Textos-fonte", filename, 5)
+
+        getStatistics(filename, statistics_1_list, ideal_summary, bestS_1)
+        getStatistics(filename, statistics_2_list, ideal_summary, bestS)
     #after having all files, calculate means
 
-    print "MPrecision: " + str(getMPrecision(statistics_list))
-    print "MRecall: " + str(getMRecall(statistics_list))
-    print "MF1: " + str(getMF1(statistics_list))
-    print "MAP: " + str(getMAP(statistics_list))
+    print "\nEXERCISE 1"
+    print "MPrecision: " + str(getMPrecision(statistics_1_list))
+    print "MRecall: " + str(getMRecall(statistics_1_list))
+    print "MF1: " + str(getMF1(statistics_1_list))
+    print "MAP: " + str(getMAP(statistics_1_list))
+
+    print "\nEXERCISE 2"
+    print "MPrecision: " + str(getMPrecision(statistics_2_list))
+    print "MRecall: " + str(getMRecall(statistics_2_list))
+    print "MF1: " + str(getMF1(statistics_2_list))
+    print "MAP: " + str(getMAP(statistics_2_list))
 
 ################################################
 #                     run                      #
