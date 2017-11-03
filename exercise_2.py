@@ -121,13 +121,14 @@ def exercise_2_main(file):
         ideal_summary = getIdealSummary(filename)
         printBestSent(ideal_summary)
 
-        statList = getStatistics(filename, statistics_list, ideal_summary, bestS)
-        # print statList
-        print type(statList)
+        getStatistics(filename, statistics_list, ideal_summary, bestS)
     #after having all files, calculate means
-    mean = getMAP(statistics_list)
-    print "MAP: " + str(mean)
-    
+
+    print "MPrecision: " + str(getMPrecision(statistics_list))
+    print "MRecall: " + str(getMRecall(statistics_list))
+    print "MF1: " + str(getMF1(statistics_list))
+    print "MAP: " + str(getMAP(statistics_list))
+
 ################################################
 #                     run                      #
 ################################################
