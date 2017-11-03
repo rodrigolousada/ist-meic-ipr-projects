@@ -77,7 +77,7 @@ def getIdealSummary(file):
     ideal_summary = fileSentences(fpath_ideal)
     return re.split(r'[\r\n]+',ideal_summary)
 
-def getStatistics(file, i ,statistics_list, ideal_summary, bestS):
+def getStatistics(file, statistics_list, ideal_summary, bestS):
     precision = getPrecision(ideal_summary, bestS)
     recall = getRecall(ideal_summary, bestS)
     f1 = getF1(precision, recall)
@@ -93,24 +93,24 @@ def exercise_2_main(file):
     docs = getFiles("TeMario/Textos-fonte")
     statistics_list = []
 
-    #for i add for every document
-    fpath = os.path.join("TeMario/Textos-fonte", file)
-    docEval = fileSentences(fpath)
-    fileS = re.split(r'[\r\n]+',docEval)
+    for filename in os.listdir("TeMario/Textos-fonte")[1:]:
+        fpath = os.path.join("TeMario/Textos-fonte", filename)
+        docEval = fileSentences(fpath)
+        fileS = re.split(r'[\r\n]+',docEval)
 
-    matrixSimilarity = similarity(docs, fileS)
-    scores = dictSimilarity(matrixSimilarity)
+        matrixSimilarity = similarity(docs, fileS)
+        scores = dictSimilarity(matrixSimilarity)
 
-    bestS = bestSentences(scores,fileS,5)
-    printBestSent(bestS)
+        bestS = bestSentences(scores,fileS,5)
+        printBestSent(bestS)
 
-    for i in xrange(10):
-        print "\n"
+        for i in xrange(10):
+            print "\n"
 
-    ideal_summary = getIdealSummary(file)
-    printBestSent(ideal_summary)
+        ideal_summary = getIdealSummary(file)
+        printBestSent(ideal_summary)
 
-    getStatistics(file, 0, statistics_list, ideal_summary, bestS)
+        # statList = getStatistics(file, statistics_list, ideal_summary, bestS)
 
 
     #after having all files, calculate means
