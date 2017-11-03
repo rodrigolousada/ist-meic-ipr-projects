@@ -62,11 +62,7 @@ def fileSentences(filename):
     return lines
 
 def similarity(doc, fileSent):
-<<<<<<< HEAD
-    vectorizer = TfidfVectorizer( use_idf=True, smooth_idf = False )
-=======
     vectorizer = TfidfVectorizer_2()
->>>>>>> 3b4e3877ba32cd328e7555046031c53eac27900c
     vectorizer = vectorizer.fit(doc)
 
     vecSpaceM_sent = vectorizer.transform(fileSent)
