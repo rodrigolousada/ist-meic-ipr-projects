@@ -12,47 +12,43 @@ import string
 #from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import _document_frequency
 from sklearn.metrics.pairwise import cosine_similarity
-from math import log10
 
-# ################################################
-# #                   classes                    #
-# ################################################
-#
-# # class TfidfTransformer_2(TfidfTransformer):
-# #     def __init__(self):
-# #         TfidfTransformer.__init__(self, use_idf = True)
-# #
-# #     def fit(self, X, y=None):
-# #         """Learn the idf vector (global term weights)
-# #         Parameters
-# #         ----------
-# #         X : sparse matrix, [n_samples, n_features]
-# #             a matrix of term/token counts
-# #         """
-# #         if not sp.issparse(X):
-# #             X = sp.csc_matrix(X)
-# #         if self.use_idf:
-# #             n_samples, n_features = X.shape
-# #             df = _document_frequency(X)
-# #
-# #             # perform idf smoothing if required
-# #             df += int(self.smooth_idf)
-# #             n_samples += int(self.smooth_idf)
-# #
-# #             # log+1 instead of log makes sure terms with zero idf don't get
-# #             # suppressed entirely.
-# #             idf = log10(float(n_samples) / df)
-# #             self._idf_diag = sp.spdiags(idf, diags=0, m=n_features, n=n_features, format='csr')
-# #
-# #             return self
-#
-#
-#
-# class TfidfVectorizer_2(TfidfVectorizer):
-#
-#     def __init__(self):
-#     #         TfidfTransformer.__init__(self, use_idf = True)
+import scipy.sparse as sp
+
+################################################
+#                   classes                    #
+################################################
+
+class TfidfTransformer_2(TfidfTransformer):
+    def __init__(self):
+        TfidfTransformer.__init__(self, use_idf = True)
+
+    def fit(self, X, y=None):
+        """Learn the idf vector (global term weights)
+        Parameters
+        ----------
+        X : sparse matrix, [n_samples, n_features]
+            a matrix of term/token counts
+        """
+        if not sp.issparse(X):
+            X = sp.csc_matrix(X)
+        if self.use_idf:
+            n_samples, n_features = X.shape
+            df = _document_frequency(X)
+
+            idf = np.log10(float(n_samples) / df) +1 #remove 1? should I add TF?
+
+            self._idf_diag = sp.spdiags(idf, diags=0, m=n_features, n=n_features, format='csr')
+
+            return self
+
+class TfidfVectorizer_2(TfidfVectorizer):
+
+    def __init__(self):
+         TfidfVectorizer.__init__(self, use_idf = True)
+         self._tfidf = TfidfTransformer_2()
 
 ################################################
 #                 functions                    #
@@ -66,7 +62,7 @@ def fileSentences(filename):
     return lines
 
 def similarity(doc, fileSent):
-    vectorizer = TfidfVectorizer( use_idf=True )
+    vectorizer = TfidfVectorizer_2()
     vectorizer = vectorizer.fit(doc)
 
     vecSpaceM_sent = vectorizer.transform(fileSent)
@@ -104,7 +100,9 @@ def exercise_1_main(dir, file, nr):
     fileS = re.split(r'[\r\n]+',lines)
 
     matrixSimilarity = similarity([doc], fileS)
+    #print matrixSimilarity
     scores = dictSimilarity(matrixSimilarity)
+    #print scores
 
     bestS = bestSentences(scores,fileS,nr)
     printBestSent(bestS)
