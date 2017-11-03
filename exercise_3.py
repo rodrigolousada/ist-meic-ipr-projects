@@ -88,9 +88,7 @@ class BM25Transformer(TfidfTransformer):
             k1 = 1.2
             b = 0.75
 
-            print X
             nonzero_array = np.nonzero(X)
-            print nonzero_array
             lines = nonzero_array[0:1][0]
             columns = nonzero_array[1:2][0]
 
@@ -103,8 +101,6 @@ class BM25Transformer(TfidfTransformer):
                 term_frequency = X[document,term]
                 score=(term_frequency*(k1+1))/(term_frequency+k1*(1-b+b*(document_lenght/self._avgdl)))
                 X[document,term]=score
-
-            print X
 
             X = X * self._idf_diag
 
