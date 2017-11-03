@@ -45,17 +45,13 @@ def getRecall(relevant_docs, answer_set):
 def getF1(precision, recall):
     return float((2 * recall * precision) / float((recall + precision)))
 
-def getPrecisionAt(nr, relevant_docs, answer_set):
-    if nr == 0:
-        return getPrecision(relevant_docs, answer_set[0])
-    return getPrecision(relevant_docs, answer_set[0:nr])
 
 def getAP(relevant_docs, answer_set):
     numerator = 0
     for i in xrange(len(relevant_docs)):
         if relevant_docs[i] in answer_set:
             index = answer_set.index(relevant_docs[i])
-            numerator += getPrecisionAt(index, relevant_docs, answer_set)
+            numerator += getPrecision(relevant_docs[0:i+1], answer_set[0:index+1])
     return float(numerator / float(len(relevant_docs)))
 
 def meanCalculator(statistics_list, nr):
@@ -95,11 +91,11 @@ def getStatistics(file, statistics_list, ideal_summary, bestS):
     else:
         f1 = 0
         ap = 0
-    # print "File: " + file
-    # print "Precision: " + str(precision)
-    # print "Recall: " + str(recall)
-    # print "F1: " + str(f1)
-    # print "AP: " + str(ap)
+    print "File: " + file
+    print "Precision: " + str(precision)
+    print "Recall: " + str(recall)
+    print "F1: " + str(f1)
+    print "AP: " + str(ap)
     return statistics_list.append([precision, recall, f1, ap])
 
 def exercise_2_main(file):
@@ -127,9 +123,11 @@ def exercise_2_main(file):
 
         statList = getStatistics(filename, statistics_list, ideal_summary, bestS)
         # print statList
-
+        print type(statList)
     #after having all files, calculate means
-
+    mean = getMAP(statistics_list)
+    print "MAP: " + str(mean)
+    
 ################################################
 #                     run                      #
 ################################################

@@ -23,7 +23,7 @@ import scipy.sparse as sp
 
 class TfidfTransformer_2(TfidfTransformer):
     def __init__(self):
-        TfidfTransformer.__init__(self, use_idf = True)
+        TfidfTransformer.__init__(self, use_idf = True, smooth_idf=False)
 
     def fit(self, X, y=None):
         """Learn the idf vector (global term weights)
@@ -36,10 +36,10 @@ class TfidfTransformer_2(TfidfTransformer):
             X = sp.csc_matrix(X)
         if self.use_idf:
             n_samples, n_features = X.shape
+
             df = _document_frequency(X)
 
-            idf = np.log10(float(n_samples) / df) +1 #remove 1? should I add TF?
-
+            idf = np.log10(float(n_samples) / df)#remove 1? should I add TF?
             self._idf_diag = sp.spdiags(idf, diags=0, m=n_features, n=n_features, format='csr')
 
             return self
@@ -47,7 +47,7 @@ class TfidfTransformer_2(TfidfTransformer):
 class TfidfVectorizer_2(TfidfVectorizer):
 
     def __init__(self):
-         TfidfVectorizer.__init__(self, use_idf = True)
+         TfidfVectorizer.__init__(self, use_idf = True, smooth_idf=False)
          self._tfidf = TfidfTransformer_2()
 
 ################################################
@@ -55,7 +55,6 @@ class TfidfVectorizer_2(TfidfVectorizer):
 ################################################
 
 def fileSentences(filename):
-    # print "entrou"
     with codecs.open(filename, "r", "latin-1") as file:
         lines = (file.read())#.split('\n')#.decode('utf-8')
     file.close()
@@ -63,14 +62,15 @@ def fileSentences(filename):
 
 def similarity(doc, fileSent):
     vectorizer = TfidfVectorizer_2()
-    vectorizer = vectorizer.fit(doc)
+    vectorizer = vectorizer.fit(fileSent)
 
     vecSpaceM_sent = vectorizer.transform(fileSent)
     vecSpaceM_doc = vectorizer.transform(doc)
 
     listSimilarity = cosine_similarity(vecSpaceM_sent,vecSpaceM_doc)
-
     return listSimilarity
+
+
 
 def dictSimilarity(listSimilarity):
     rangeMatrix = listSimilarity.shape[0]
