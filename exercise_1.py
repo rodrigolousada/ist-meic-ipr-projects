@@ -66,7 +66,7 @@ def fileSentences(filename):
     return lines
 
 def similarity(doc, fileSent):
-    vectorizer = TfidfVectorizer( use_idf=True )
+    vectorizer = TfidfVectorizer( use_idf=True, smooth_idf = False )
     vectorizer = vectorizer.fit(doc)
 
     vecSpaceM_sent = vectorizer.transform(fileSent)
@@ -88,7 +88,8 @@ def bestSentences(dictSent,fileS,numb):
     sentSort = sorted(dictSent, key = dictSent.__getitem__,reverse=True)
     bestS = []
     for i in xrange(numb):
-        bestS.append(fileS[sentSort[i]])
+        bestS.append((fileS[sentSort[i]]))
+        #re.sub(r'^\s|\s$','',
     return bestS
 
 def printBestSent(bestSent):
@@ -99,16 +100,16 @@ def exercise_1_main(dir, file, nr):
     fpath = os.path.join(dir, file)
 
     lines = fileSentences(fpath)
-    doc=lines.replace('\n', '')
+    doc=(lines.replace('\n', ' '))
     # fileS = sent_tokenize(lines)
-    fileS = re.split(r'[\r\n]+',lines)
+    fileS = re.split(r'[\r\n\.]+',lines.strip(" "))
 
     matrixSimilarity = similarity([doc], fileS)
     scores = dictSimilarity(matrixSimilarity)
 
     bestS = bestSentences(scores,fileS,nr)
     printBestSent(bestS)
-
+    return bestS
 ################################################
 #                     run                      #
 ################################################
