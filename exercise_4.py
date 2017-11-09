@@ -25,7 +25,7 @@ def calculateMMR(sentence, S, doc, lambda_symb):
     for sent in S:
         sum_sim_S += float(similarity([sent],[sentence]))
     document_similarity = similarity([doc],[sentence])
-    mmr = float((1-lambda_symb) * document_similarity[0][0] - lambda_symb * sum_sim_S)
+    mmr = float((1-lambda_symb) * float(document_similarity[0][0]) - float(lambda_symb * sum_sim_S))
     return mmr
 
 
@@ -33,7 +33,7 @@ def exercise_4_main(nr, lambda_symb):
     statistics_1_list = []
     statistics_2_list = []
     for filename in os.listdir("TeMario/Textos-fonte")[1:]:
-        print filename
+
         fpath = os.path.join("TeMario/Textos-fonte", filename)
         docEval = fileSentences(fpath)
 
@@ -61,7 +61,6 @@ def exercise_4_main(nr, lambda_symb):
         ideal_summary = getIdealSummary(filename)
         getStatistics(filename, statistics_1_list, ideal_summary, S)
         getStatistics(filename, statistics_2_list, ideal_summary, news_article_procedure)
-        print"\n"
 
     print "\nEXERCISE MMR"
     print "MPrecision: " + str(getMPrecision(statistics_1_list))
@@ -79,4 +78,4 @@ def exercise_4_main(nr, lambda_symb):
 ################################################
 
 if __name__ == '__main__':
-    exercise_4_main(5, 0.8)
+    exercise_4_main(5, 0.5)

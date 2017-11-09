@@ -24,7 +24,7 @@ def getFiles(path):
     for filename in os.listdir(path)[1:]:
         fpath = os.path.join(path, filename)
         newfile = fileSentences(fpath)
-        # print (newfile).replace('\n', '')
+
         allfiles+=((newfile).replace('\n', ' ')).strip()
     return [allfiles]
 
@@ -91,11 +91,11 @@ def getStatistics(file, statistics_list, ideal_summary, bestS):
     else:
         f1 = 0
         ap = 0
-    print "File: " + file
-    print "Precision: " + str(precision)
-    print "Recall: " + str(recall)
-    print "F1: " + str(f1)
-    print "AP: " + str(ap)
+    # print "File: " + file
+    # print "Precision: " + str(precision)
+    # print "Recall: " + str(recall)
+    # print "F1: " + str(f1)
+    # print "AP: " + str(ap)
     return statistics_list.append([precision, recall, f1, ap])
 
 def exercise_2_main(file):
@@ -115,12 +115,11 @@ def exercise_2_main(file):
         scores = dictSimilarity(matrixSimilarity)
 
         bestS = bestSentences(scores,fileS,5)
-        printBestSent(bestS)
+        # printBestSent(bestS)
 
-        for i in xrange(3):
-             print "\n"
+
         ideal_summary = getIdealSummary(filename)
-        printBestSent(ideal_summary)
+        # printBestSent(ideal_summary)
 
         bestS_1 =exercise_1_main("TeMario/Textos-fonte", filename, 5)
 

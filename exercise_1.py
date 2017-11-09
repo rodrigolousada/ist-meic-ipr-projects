@@ -101,16 +101,16 @@ def exercise_1_main(dir, file, nr):
     fileS = re.split(r'[\r\n\.]+',lines.strip(" "))
 
     matrixSimilarity = similarity([doc], fileS)
-    #print matrixSimilarity
+
     scores = dictSimilarity(matrixSimilarity)
-    #print scores
 
     bestS = bestSentences(scores,fileS,nr)
-    printBestSent(bestS)
+    # printBestSent(bestS)
     return bestS
 ################################################
 #                     run                      #
 ################################################
 
 if __name__ == '__main__':
-    exercise_1_main("TeMario/Textos-fonte", "ce94jl10-a.txt", 3)
+    mainS = exercise_1_main("TeMario/Textos-fonte", "ce94jl10-a.txt", 3)
+    printBestSent(mainS)

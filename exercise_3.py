@@ -1,6 +1,9 @@
 ################################################
 #                   imports                    #
 ################################################
+#import nltk
+#nltk.download('floresta')
+
 import codecs
 import glob, os
 import nltk
@@ -8,17 +11,20 @@ import numpy as np
 import re
 import sys
 import string
-#from nltk.tokenize import sent_tokenize, word_tokenize
-#from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_extraction.text import _document_frequency
+from nltk.tokenize import sent_tokenize, word_tokenize
+from sklearn.feature_extraction.text import TfidfVectorizer, _document_frequency, TfidfTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-
+from exercise_1 import  fileSentences, similarity, dictSimilarity, bestSentences, printBestSent, exercise_1_main
+from exercise_2 import  getFiles, getIntersection, getPrecision, getRecall, getF1, getAP, meanCalculator, getMPrecision, getMRecall, getMF1, getMAP, getIdealSummary,  getStatistics, exercise_2_main
+from nltk.corpus import floresta
+from nltk import ngrams
 import scipy.sparse as sp
 
 from sklearn.utils.validation import check_is_fitted
 from sklearn.preprocessing import normalize
+
+stopwords = nltk.corpus.stopwords.words('portuguese')
+
 ################################################
 #                   classes                    #
 ################################################
@@ -112,70 +118,92 @@ class BM25Transformer(TfidfTransformer):
 class BM25Vectorizer(TfidfVectorizer):
 
     def __init__(self):
-         TfidfVectorizer.__init__(self, use_idf = True, smooth_idf=False)
+         TfidfVectorizer.__init__(self, use_idf = True, smooth_idf=False, ngram_range=(2,2), stop_words=stopwords)
          self._tfidf = BM25Transformer()
+
 
 ################################################
 #                 functions                    #
 ################################################
-
-def fileSentences(filename):
-    with codecs.open(filename, "r", "latin-1") as file:
-        lines = (file.read())#.split('\n')#.decode('utf-8')
-    file.close()
-    return lines
-
-def similarity(doc, fileSent):
+def similarityBiGram(doc, fileSent):
     vectorizer = BM25Vectorizer()
-    vectorizer = vectorizer.fit(fileSent)
+
+    docsWords = word_tokenize(doc[0])
+    vectorizer = vectorizer.fit(docsWords)
 
     vecSpaceM_sent = vectorizer.transform(fileSent)
-    vecSpaceM_doc = vectorizer.transform(doc)
+    vecSpaceM_doc = vectorizer.transform(docsWords)
 
     listSimilarity = cosine_similarity(vecSpaceM_sent,vecSpaceM_doc)
     return listSimilarity
 
 
 
-def dictSimilarity(listSimilarity):
-    rangeMatrix = listSimilarity.shape[0]
-    scores = {}
 
-    for x in xrange(rangeMatrix):
-        scores.update({x:str(round(listSimilarity[x][0],8))})
-    return scores
+def docClean(document):
+    newdoc = ""
+    newdoc += ([i for i in document.split() if i not in stopwords])
+    return document
 
-def bestSentences(dictSent,fileS,numb):
-    sentSort = sorted(dictSent, key = dictSent.__getitem__,reverse=True)
-    bestS = []
-    for i in xrange(numb):
-        bestS.append((fileS[sentSort[i]]))
-        #re.sub(r'^\s|\s$','',
-    return bestS
+def simplify_tag(t):
+    if "+" in t:
+        return t[t.index("+")+1:]
+    else:
+        return t
 
-def printBestSent(bestSent):
-    for i in xrange(len(bestSent)):
-        print bestSent[i] + "\n"
+def tokenize():
+    tsents = floresta.tagged_sents()
+    tsents = [[(w.lower(),simplify_tag(t)) for (w,t) in sent] for sent in tsents if sent]
+    train = tsents[100:]
+    test = tsents[:100]
+    tagger0 = nltk.DefaultTagger('n')
+    tagger1 = nltk.UnigramTagger(train, backoff=tagger0)
+    return tagger1
 
-def exercise_1_main(dir, file, nr):
-    fpath = os.path.join(dir, file)
 
-    lines = fileSentences(fpath)
-    doc=(lines.replace('\n', ' '))
-    # fileS = sent_tokenize(lines)
-    fileS = re.split(r'[\r\n\.]+',lines.strip(" "))
+def tagger(doc,tag1):
+    tags = {}
+    for sentence in doc:
+        tags.update(tag1.tag(word_tokenize(sentence)))
+    return tags
 
-    matrixSimilarity = similarity([doc], fileS)
-    #print matrixSimilarity
-    scores = dictSimilarity(matrixSimilarity)
-    #print scores
 
-    bestS = bestSentences(scores,fileS,nr)
-    printBestSent(bestS)
-    return bestS
+def exercise_3_main(file):
+    docs = getFiles("TeMario/Textos-fonte")
+
+    statistics_3_list = []
+    tagForWords = tokenize()
+
+    for filename in os.listdir("TeMario/Textos-fonte")[1:]:
+        fpath = os.path.join("TeMario/Textos-fonte", filename)
+        docEval = fileSentences(fpath)
+        fileS = re.split(r'[\r\n\.]+',docEval.strip(" "))
+
+        tokenizeDoc = tagger(fileS,tagForWords)
+
+        matrixSimilarity = similarityBiGram(docs, tokenizeDoc)
+
+        scores = dictSimilarity(matrixSimilarity)
+
+        bestS = bestSentences(scores,fileS,5)
+
+
+        ideal_summary = getIdealSummary(filename)
+        # printBestSent(ideal_summary)
+
+        getStatistics(filename, statistics_3_list, ideal_summary, bestS)
+
+    exercise_2_main(filename)
+    #after having all files, calculate means
+    print "\nEXERCISE 3"
+    print "MPrecision: " + str(getMPrecision(statistics_3_list))
+    print "MRecall: " + str(getMRecall(statistics_3_list))
+    print "MF1: " + str(getMF1(statistics_3_list))
+    print "MAP: " + str(getMAP(statistics_3_list))
+
 ################################################
 #                     run                      #
 ################################################
 
 if __name__ == '__main__':
-    exercise_1_main("TeMario/Textos-fonte", "ce94jl10-a.txt", 3)
+    exercise_3_main("ce94jl10-a.txt")
