@@ -1,11 +1,11 @@
 ################################################
-#                   Project by:                #
+#                    Ex1					   #
+#               Project by:                    #
 #		Group 13							   #
 #		Sofia Aparicio 81105				   #
 #		Rodrigo Lousada 81115				   #
 #		Rogerio Cabaco 						   #
 ################################################
-
 
 ################################################
 #                   imports                    #
@@ -30,41 +30,12 @@ SENT_SUM = 5
 #                   classes                    #
 ################################################
 
-class TfidfTransformer_2(TfidfTransformer):
-	def __init__(self):
-		TfidfTransformer.__init__(self, use_idf = True, smooth_idf=False)
-
-	def fit(self, X, y=None):
-		"""Learn the idf vector (global term weights)
-		Parameters
-		X : sparse matrix, [n_samples, n_features]
-			a matrix of term/token counts
-		"""
-		if not sp.issparse(X):
-			X = sp.csc_matrix(X)
-		if self.use_idf:
-			n_samples, n_features = X.shape
-			df = _document_frequency(X)
-			idf = np.log10(float(n_samples) / df) #remove 1? should I add TF?
-			self._idf_diag = sp.spdiags(idf, diags=0, m=n_features, n=n_features, format='csr')
-
-			return self
-
-class TfidfVectorizer_2(TfidfVectorizer):
-
-	def __init__(self):
-		TfidfVectorizer.__init__(self, use_idf = True, smooth_idf=False)
-		self._tfidf = TfidfTransformer_2()
-
-
 
 class Graph:
 	def __init__(self, listVertices):
 		print("------- creating graph ----------")
 		self.Vertices = self.createAllVert(listVertices)
 		self.Edges = self.createAllEdges()
-		self.pageRank()
-		(self.getSummary(SENT_SUM))
 
 	def createAllVert(self, listVertices):
 		vertList = []
@@ -156,10 +127,14 @@ class Graph:
 
 
 	def getSummary(self,sentSum):
+		summarylist = []
+		self.pageRank()
 		bestSent = (sorted(self.Vertices, key=lambda x: x.pageRank, reverse = True))[:sentSum]
 		orderedVertex = sorted(bestSent, key = lambda x : self.Vertices.index(x))
 		for x in orderedVertex:
 			print(x.Sentence)
+			summarylist.append(x.Sentence)
+		return summarylist
 
 class Vertex:
 	def __init__(self, sent):
@@ -202,16 +177,18 @@ def fileRead(filename):
 	file.close()
 	return lines.lower()
 
-def exercise_1_main(dir, file, nr):
+def exercise_1_main(dir, file):
 	fpath = os.path.join(dir, file)
 	lines = fileRead(fpath)
 	doc=(lines.replace('\n', ' '))
 	fileSent = re.split(r'[\r\n\.]+',lines.strip(" "))
 	graph = Graph(fileSent)
+	return graph.getSummary(SENT_SUM)
+
 
 ################################################
 #                     run                      #
 ################################################
 
 if __name__ == '__main__':
-	mainS = exercise_1_main("TeMario/Textos-fonte", "ce94jl10-a.txt", 3)
+	mainS = exercise_1_main("TeMario/Textos-fonte", "ce94jl10-a.txt")
