@@ -58,7 +58,7 @@ class TfidfVectorizer_2(TfidfVectorizer):
 		self._tfidf = TfidfTransformer_2()
 
 
-class Graph():
+class Graph:
 	def __init__(self, listVertices):
 		self.Vertices = self.createAllVert(listVertices)
 		self.Edges = self.createAllEdges()
@@ -335,16 +335,17 @@ if __name__ == '__main__':
 	statistics_1_list = []
 	statistics_2_list = []
 
-	print("---------- Getting ideal Summaries ---------")
-	ideal_summary = getIdealSummary("ce94jl10-a.txt")
-	print("----------------- Exercise 1 ---------------")
-	summary_exercise1 = exercise_1_main("TeMario/Textos-fonte", "ce94jl10-a.txt")
-	print("----------------- Exercise 2 ---------------")
-	summary_exercise2 = exercise_2_main("TeMario/Textos-fonte", "ce94jl10-a.txt")
+	for filename in os.listdir("TeMario/Textos-fonte")[1:50]:
+		print(filename)
+		print("---------- Getting ideal Summaries ---------")
+		ideal_summary = getIdealSummary(filename)
+		print("----------------- Exercise 1 ---------------")
+		summary_exercise1 = exercise_1_main("TeMario/Textos-fonte", filename)
+		print("----------------- Exercise 2 ---------------")
+		summary_exercise2 = exercise_2_main("TeMario/Textos-fonte", filename)
 
-
-	getStatistics("ce94jl10-a.txt", statistics_1_list, ideal_summary, summary_exercise1)
-	getStatistics("ce94jl10-a.txt", statistics_2_list, ideal_summary, summary_exercise2)
+		getStatistics(filename, statistics_1_list, ideal_summary, summary_exercise1)
+		getStatistics(filename, statistics_2_list, ideal_summary, summary_exercise2)
 
 	print ("\nEXERCISE 1")
 	print ("MPrecision: " + str(getMPrecision(statistics_1_list)))
