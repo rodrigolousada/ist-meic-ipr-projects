@@ -23,11 +23,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 ################################################
 #                 constants                    #
 ################################################
-THRESHOLD = 0.2
-RESID_PROB = 0.15 #(d)
+THRESHOLD = 0.1
+RESID_PROB = 0.2 #(d)
 MAXITERATIONS = 50
 SENT_SUM = 5
-
 ################################################
 #                   classes                    #
 ################################################
@@ -173,12 +172,13 @@ class Graph:
 
 				#Calculating sum sigma
 				for edge in vertex.Edges:
-					if edge.Vertex1 == vertex:
-						#print(edge.Vertex2.Sentence)
-						sigma += (edge.Vertex2).pageRank * edge.Weight / (edge.Vertex2).sumLinksWeight()
-					elif edge.Vertex2 == vertex:
-						#print(edge.Vertex1.Sentence)
-						sigma += (edge.Vertex1).pageRank * edge.Weight / (edge.Vertex1).sumLinksWeight()
+					if (edge.Weight != 0):
+						if edge.Vertex1 == vertex:
+							#print(edge.Vertex2.Sentence)
+							sigma += (edge.Vertex2).pageRank * edge.Weight / (edge.Vertex2).sumLinksWeight()
+						elif edge.Vertex2 == vertex:
+							#print(edge.Vertex1.Sentence)
+							sigma += (edge.Vertex1).pageRank * edge.Weight / (edge.Vertex1).sumLinksWeight()
 
 				#getting pageRankNew
 				vertex.pageRankNew += dontlink * sigma
@@ -193,7 +193,7 @@ class Graph:
 		bestSent = (sorted(self.Vertices, key=lambda x: x.pageRank, reverse = True))[:sentSum]
 		orderedVertex = sorted(bestSent, key = lambda x : self.Vertices.index(x))
 		for x in orderedVertex:
-			print(x.Sentence)
+			#print(x.Sentence)
 			summarylist.append(x.Sentence)
 		return summarylist
 
@@ -354,12 +354,12 @@ if __name__ == '__main__':
 	statistics_2_list = []
 
 	for filename in os.listdir("TeMario/Textos-fonte"):
-		print(filename)
-		print("---------- Getting ideal Summaries ---------")
+		#print(filename)
+		#print("---------- Getting ideal Summaries ---------")
 		ideal_summary = getIdealSummary(filename)
-		print("----------------- Exercise 1 ---------------")
+		#print("----------------- Exercise 1 ---------------")
 		summary_exercise1 = exercise_1_main("TeMario/Textos-fonte", filename)
-		print("----------------- Exercise 2 ---------------")
+		#print("----------------- Exercise 2 ---------------")
 		summary_exercise2 = exercise_2_main("TeMario/Textos-fonte", filename)
 
 		getStatistics(filename, statistics_1_list, ideal_summary, summary_exercise1)

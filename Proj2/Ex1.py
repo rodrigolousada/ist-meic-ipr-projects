@@ -22,8 +22,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 ################################################
 #                 constants                    #
 ################################################
-THRESHOLD = 0.2
-RESID_PROB = 0.15 #(d)
+THRESHOLD = 0.1
+RESID_PROB = 0.2 #(d)
 MAXITERATIONS = 50
 SENT_SUM = 5
 ################################################
@@ -33,7 +33,7 @@ SENT_SUM = 5
 
 class Graph:
 	def __init__(self, listVertices):
-		print("------- creating graph ----------")
+		#print("------- creating graph ----------")
 		self.Vertices = self.createAllVert(listVertices)
 		self.Edges = self.createAllEdges()
 
@@ -132,7 +132,7 @@ class Graph:
 		bestSent = (sorted(self.Vertices, key=lambda x: x.pageRank, reverse = True))[:sentSum]
 		orderedVertex = sorted(bestSent, key = lambda x : self.Vertices.index(x))
 		for x in orderedVertex:
-			print(x.Sentence)
+			#print(x.Sentence)
 			summarylist.append(x.Sentence)
 		return summarylist
 
