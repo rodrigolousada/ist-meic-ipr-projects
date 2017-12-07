@@ -293,9 +293,18 @@ def getMAP(statistics_list):
     return meanCalculator(statistics_list,3)
 
 def getIdealSummary(file):
-    fpath_ideal = os.path.join("TeMario/ExtratosIdeais", "Ext-" + file)
-    ideal_summary = fileRead(fpath_ideal)
-    return re.split(r'[\r\n\.]+',ideal_summary.strip(" "))
+	fpath_ideal = os.path.join("TeMario/ExtratosIdeais", "Ext-" + file)
+	ideal_summary = fileRead(fpath_ideal)
+
+	sentences = []
+	sentences_final = []
+	paragraphs = [p for p in ideal_summary.split('\n') if p]
+	for paragraph in paragraphs:
+		sentences += sent_tokenize(paragraph)
+	for sentence in sentences:
+		if sentence.strip(" ") != "(...)":
+			sentences_final.append(sentence.strip(" "))
+	return sentences_final
 
 def getStatistics(file, statistics_list, ideal_summary, bestS):
     ideal_summary = [x.strip(' ') for x in ideal_summary]
@@ -322,7 +331,16 @@ def exercise_2_main(dir, file):
 	fpath = os.path.join(dir, file)
 	lines = fileRead(fpath)
 	doc=(lines.replace('\n', ' '))
-	fileSent = re.split(r'[\r\n\.]+',lines.strip(" "))
+
+	sentences = []
+	fileSent = []
+	paragraphs = [p for p in lines.split('\n') if p]
+	for paragraph in paragraphs:
+		sentences += sent_tokenize(paragraph)
+	for sentence in sentences:
+		if sentence.strip(" ") != "(...)":
+			fileSent.append(sentence.strip(" "))
+
 	graph = Graph(fileSent)
 	return graph.getSummary(SENT_SUM)
 	# graph.printGraph()
@@ -335,7 +353,7 @@ if __name__ == '__main__':
 	statistics_1_list = []
 	statistics_2_list = []
 
-	for filename in os.listdir("TeMario/Textos-fonte")[1:50]:
+	for filename in os.listdir("TeMario/Textos-fonte"):
 		print(filename)
 		print("---------- Getting ideal Summaries ---------")
 		ideal_summary = getIdealSummary(filename)

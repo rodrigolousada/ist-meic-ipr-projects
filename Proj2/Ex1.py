@@ -181,7 +181,16 @@ def exercise_1_main(dir, file):
 	fpath = os.path.join(dir, file)
 	lines = fileRead(fpath)
 	doc=(lines.replace('\n', ' '))
-	fileSent = re.split(r'[\r\n\.]+',lines.strip(" "))
+
+	sentences = []
+	fileSent = []
+	paragraphs = [p for p in lines.split('\n') if p]
+	for paragraph in paragraphs:
+		sentences += sent_tokenize(paragraph)
+	for sentence in sentences:
+		if sentence.strip(" ") != "(...)":
+			fileSent.append(sentence.strip(" "))
+
 	graph = Graph(fileSent)
 	return graph.getSummary(SENT_SUM)
 
