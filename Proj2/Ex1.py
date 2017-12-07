@@ -108,7 +108,7 @@ class Graph:
 						sigma += (edge.Vertex2).pageRank / (edge.Vertex2).numberEdges()
 					elif edge.Vertex2 == vertex:
 						#print(edge.Vertex1.Sentence)
-						sigma += (edge.Vertex1).pageRank / (edge.Vertex2).numberEdges()
+						sigma += (edge.Vertex1).pageRank / (edge.Vertex1).numberEdges()
 
 				#getting pageRankNew
 				vertex.pageRankNew += dontlink * sigma
