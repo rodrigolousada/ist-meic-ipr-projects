@@ -10,7 +10,7 @@
 ################################################
 #                   imports                    #
 ################################################
-from Ex2 import TfidfTransformer_2, TfidfVectorizer_2, Graph, Vertex, Edge
+from Ex2 import TfidfTransformer_2, TfidfVectorizer_2, Graph, Vertex, Edge, getStatistics, getMPrecision, getMRecall, getMF1, getMAP
 import re, pdb, sys, math, nltk, glob, os, codecs, string
 import scipy.sparse as sp
 import numpy as np
@@ -185,6 +185,7 @@ def tfidfSim(doc, fileSent):
     vecSpaceM_sent = vectorizer.transform(sentWords)
     vecSpaceM_doc = vectorizer.transform(doc)
     listSimilarity = cosine_similarity(vecSpaceM_sent,vecSpaceM_doc)
+
     return (listSimilarity).sum()
 
 def bm25Sim(doc, fileSent):
@@ -201,11 +202,11 @@ def bm25Sim(doc, fileSent):
 
 def perceptron(train, labels, test):
     ppt = Perceptron(max_iter = 300, eta0 = 0.1, random_state = 0)
-    print(train)
-
     ppt.fit(train, labels)
-    predict = ppt.predict(test)
+    predict = ppt.decision_function(test)
     return predict
+
+
 
 def exercise_3_main():
     train_data = getDataPath("TeMário_2006/Originais")
@@ -213,19 +214,31 @@ def exercise_3_main():
     test_data = getDataFromDir("TeMario/Textos-fonte")
     test_target = getDataFromDir("TeMario/ExtratosIdeais")
 
+
     train = trainData(train_data,train_target) #train[0] matrix train[1] labels
-    test = getCalcs(test_data[3],test_target[3])
 
-    result = perceptron(train[0],train[1],test[0])
+    statistics_3_list = []
 
-    print(test[0])
-    print(len(test[0]))
-    print(result)
-    for index in range(len(result)):
+    for i in range(len(test_data)):
+        test = getCalcs(test_data[i],test_target[i])
+        result = perceptron(train[0],train[1],test[0])
 
-        if result[index] !=0:
-            print(index, " - ",test_data[3][index])
+        print("-----------new sum----------")
+        output_dict = dict(enumerate(result))
+        sumSorted = sorted(output_dict, key=output_dict.get, reverse=True)
+        bestIndex= sorted(sumSorted[:5])
+        bestSent = []
 
+        for index in bestIndex:
+            bestSent.append(test_data[i][index])
+            # print(index, " - ",test_data[i][index], "  ", result[index])
+
+        getStatistics(None, statistics_3_list, test_target[i], bestSent)
+    print ("\nEXERCISE 3")
+    print ("MPrecision: " + str(getMPrecision(statistics_3_list)))
+    print ("MRecall: " + str(getMRecall(statistics_3_list)))
+    print ("MF1: " + str(getMF1(statistics_3_list)))
+    print ("MAP: " + str(getMAP(statistics_3_list)))
     # naive_bayes(train, train_target, test_data)
 
 ################################################
