@@ -10,7 +10,9 @@
 ################################################
 #                   imports                    #
 ################################################
-from Ex2 import TfidfTransformer_2, TfidfVectorizer_2, Graph, Vertex, Edge, getStatistics, getMPrecision, getMRecall, getMF1, getMAP
+from Ex2 import exercise_2_getGraph, TfidfTransformer_2, TfidfVectorizer_2, Graph, Vertex, Edge, getStatistics, getMPrecision, getMRecall, getMF1, getMAP
+from Ex1 import exercise_1_getGraph
+#from Ex1 import Graph as Graph1
 import re, pdb, sys, math, nltk, glob, os, codecs, string
 import scipy.sparse as sp
 import numpy as np
@@ -19,7 +21,7 @@ import time
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfTransformer, TfidfVectorizer,CountVectorizer,_document_frequency
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.linear_model import Perceptron
+from sklearn.linear_model import Perceptron, SGDClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.utils.validation import check_is_fitted
 from sklearn.preprocessing import normalize
@@ -172,10 +174,12 @@ def trainData(train, target):
 def getCalcs(doc,summary):
     matrixDoc = []
     labels = []
+    doc_graph_ex1 = exercise_1_getGraph(doc)
+    doc_graph_ex2 = exercise_2_getGraph(doc)
     for index in range(len(doc)):
         # if len(doc[index]) > 1:
         labels.append(1 if doc[index] in summary else 0)
-        matrixDoc.append([index+1 , tfidfSim(doc,doc[index]) ]) #, bm25Sim(doc,doc[index]),
+        matrixDoc.append([index+1 , tfidfSim(doc,doc[index]), doc_graph_ex1.Vertices[index].pageRank, doc_graph_ex2.Vertices[index].pageRank, ]) #, bm25Sim(doc,doc[index]),
     return(matrixDoc,labels)
 
 def tfidfSim(doc, fileSent):
@@ -189,19 +193,20 @@ def tfidfSim(doc, fileSent):
     return (listSimilarity).sum()
 
 def bm25Sim(doc, fileSent):
-    sentWords = word_tokenize("".join((char for char in fileSent if char not in string.punctuation)))
     vectorizer = BM25Vectorizer()
+    sentWords = word_tokenize("".join((char for char in fileSent if char not in string.punctuation)))
     vectorizer = vectorizer.fit(sentWords)
 
-    vecSpaceM_sent = vectorizer.transform(doc)
-    vecSpaceM_doc = vectorizer.transform(sentWords)
+    vecSpaceM_sent = vectorizer.transform(sentWords)
+    vecSpaceM_doc = vectorizer.transform(doc)
 
     listSimilarity = cosine_similarity(vecSpaceM_sent,vecSpaceM_doc)
 
     return listSimilarity
 
 def perceptron(train, labels, test):
-    ppt = Perceptron(max_iter = 300, eta0 = 0.1, random_state = 0)
+    #ppt = Perceptron(max_iter = 300, eta0 = 0.1, random_state = 0)
+    ppt = SGDClassifier(max_iter = 300, eta0 = 0.1, random_state = 0, loss='log')
     ppt.fit(train, labels)
     predict = ppt.decision_function(test)
     return predict
@@ -214,7 +219,6 @@ def exercise_3_main():
     test_data = getDataFromDir("TeMario/Textos-fonte")
     test_target = getDataFromDir("TeMario/ExtratosIdeais")
 
-
     train = trainData(train_data,train_target) #train[0] matrix train[1] labels
 
     statistics_3_list = []
@@ -223,7 +227,7 @@ def exercise_3_main():
         test = getCalcs(test_data[i],test_target[i])
         result = perceptron(train[0],train[1],test[0])
 
-        print("-----------new sum----------")
+        #print("-----------new sum----------")
         output_dict = dict(enumerate(result))
         sumSorted = sorted(output_dict, key=output_dict.get, reverse=True)
         bestIndex= sorted(sumSorted[:5])

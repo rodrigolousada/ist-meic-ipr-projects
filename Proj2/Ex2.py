@@ -345,6 +345,11 @@ def exercise_2_main(dir, file):
 	return graph.getSummary(SENT_SUM)
 	# graph.printGraph()
 
+def exercise_2_getGraph(fileSent):
+	graph = Graph(fileSent)
+	graph.pageRank()
+	return graph
+
 ################################################
 #                     run                      #
 ################################################
@@ -353,7 +358,7 @@ if __name__ == '__main__':
 	statistics_1_list = []
 	statistics_2_list = []
 
-	for filename in os.listdir("TeMario/Textos-fonte"):
+	for filename in os.listdir("TeMario/Textos-fonte")[1:]:
 		#print(filename)
 		#print("---------- Getting ideal Summaries ---------")
 		ideal_summary = getIdealSummary(filename)

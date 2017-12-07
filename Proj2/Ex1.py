@@ -194,6 +194,10 @@ def exercise_1_main(dir, file):
 	graph = Graph(fileSent)
 	return graph.getSummary(SENT_SUM)
 
+def exercise_1_getGraph(fileSent):
+	graph = Graph(fileSent)
+	graph.pageRank()
+	return graph
 
 ################################################
 #                     run                      #
