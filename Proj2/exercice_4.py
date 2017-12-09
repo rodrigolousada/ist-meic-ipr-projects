@@ -11,10 +11,13 @@
 #                   imports                    #
 #pip install django							   #
 ################################################
-from Ex1 import *
+from exercice_2 import *
 import feedparser
 import webbrowser
+import time
 from yattag import Doc
+from time import mktime
+from datetime import datetime
 ################################################
 #                 constants                    #
 ################################################
@@ -45,7 +48,7 @@ def getTaggs(tags):
 	return listtags
 
 def getSiteData(site):
-	dicSite, tags, summary,published = {}, [], '', ''
+	dicSite, tags, summary,published, pubparse = {}, [], '', '', time.strptime("1990.01.01","%Y.%m.%d")
 	feed = feedparser.parse(site)
 	for entrie in feed['entries']:
 		if len(entrie['title']) > 0:
@@ -55,7 +58,8 @@ def getSiteData(site):
 				tags = getTaggs(entrie['tags'])
 			if 'published' in entrie.keys() :
 				published = entrie['published']
-			dicSite.update({striphtml(entrie['title']) : [summary,tags,entrie['links'][0]['href'],published  ]})
+				pubparse = entrie['published_parsed']
+			dicSite.update({striphtml(entrie['title']) : [summary,tags,entrie['links'][0]['href'],published, pubparse  ]})
 
 	return dicSite
 
@@ -63,7 +67,7 @@ def collectAllDataWeb():
 	globalMatrix = {}
 	for site in websites:
 		globalMatrix.update(getSiteData(site))
-	print(globalMatrix)
+	# print(globalMatrix)
 
 	return globalMatrix
 
@@ -100,9 +104,17 @@ def getGlobalSummary(matrix):
 	sentSum = graph.getSummary(SENT_SUM)
 	return sentSum
 
+def orderCollectin(dictio):
+	sent = []
+	sorte = sorted(dictio.items(), key = lambda e:(e[1][4][0],e[1][4][1],e[1][4][2]), reverse=True)
+	for el in sorte:
+		sent.append(el[0])
+	return sent
+
 def exercise_4_main():
 	data = collectAllDataWeb()
-	sumary = getGlobalSummary(data.keys())
+	dataSortedTme = orderCollectin(data)
+	sumary = getGlobalSummary(dataSortedTme)
 	generateHTML(sumary, data)
 
 ################################################

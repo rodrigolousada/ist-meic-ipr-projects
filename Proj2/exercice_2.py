@@ -10,7 +10,7 @@
 ################################################
 #                   imports                    #
 ################################################
-from Ex1 import fileRead, exercise_1_main
+from exercice_1 import fileRead, exercise_1_main
 import re, pdb, sys, math, nltk, glob, os, codecs, string
 import scipy.sparse as sp
 import numpy as np

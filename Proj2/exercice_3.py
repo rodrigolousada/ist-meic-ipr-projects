@@ -10,8 +10,8 @@
 ################################################
 #                   imports                    #
 ################################################
-from Ex2 import exercise_2_getGraph, TfidfTransformer_2, TfidfVectorizer_2, Graph, Vertex, Edge, getStatistics, getMPrecision, getMRecall, getMF1, getMAP
-from Ex1 import exercise_1_getGraph
+from exercice_2 import exercise_2_getGraph, TfidfTransformer_2, TfidfVectorizer_2, Graph, Vertex, Edge, getStatistics, getMPrecision, getMRecall, getMF1, getMAP
+from exercice_1 import exercise_1_getGraph
 #from Ex1 import Graph as Graph1
 import re, pdb, sys, math, nltk, glob, os, codecs, string
 import scipy.sparse as sp
