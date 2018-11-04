@@ -9,7 +9,7 @@ This projects were developed in the scope of the subject Information Extraction 
 
 **Grade Second Project:** 18/20
 
-##MIT License
+## MIT License
 
 Copyright (c) 2017 Sofia Aparicio & Rodrigo Lousada
 
